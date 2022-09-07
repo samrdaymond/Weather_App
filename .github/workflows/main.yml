@@ -36,7 +36,10 @@ jobs:
     - name: Terraform_Plan
       run: make run_plan
     - name: Terraform_Apply
-      run: make run_apply  
+      run: make run_apply 
+
+    docker_build:
+     docker tag {image-name}:1 {account-id}.dkr.ecr.{aws-region}.amazonaws.com/{repo-name}:1
 
 
 
