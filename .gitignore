@@ -50,3 +50,5 @@ node_modules/
 
 # Optional npm cache directory
 .npm
+
+#ignor ds store and remove from index when I get a chance
