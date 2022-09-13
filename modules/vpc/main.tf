@@ -44,20 +44,19 @@ resource "aws_security_group" "samrdaymond_wa_private_sg" {
   vpc_id = aws_vpc.var.vpc_name.id
   name = "samrdaymond_wa_private_sg"
   description = "security group for private subnets"
-
-  ingress = [ {
+  ingress = {
     description = "allow access from security group public"
     from_port = 0
     to_port = 0
     protocol = "-1"
     security_groups = [ "${aws_security_group.samrdaymond_wa_public_sg}" ]
   }
-  egress = [ {
+  egress = {
     description = "allow egress to anywhere"
     from_port = 0
     to_port = 0
     protocol = "-1"
-]
+  }
 }
 
 ### EIP's for NAT gateways
@@ -126,13 +125,15 @@ resource = "aws_route" "samrdaymond_wa_private_rt_a" {
   vpc_id = aws_vpc.var.vpc_name.id
   name = "samrdaymond_wa_private_rt_a"
 }
+
 resource = "aws_route" "samrdaymond_wa_private_rt_b" {
   vpc_id = aws_vpc.var.vpc_name.id
-  name = "samrdaymond_wa_private_rt_a"
+  name = "samrdaymond_wa_private_rt_b"
 }
+
 resource = "aws_route" "samrdaymond_wa_private_rt_c" {
   vpc_id = aws_vpc.var.vpc_name.id
-  name = "samrdaymond_wa_private_rt_a"
+  name = "samrdaymond_wa_private_rt_c"
 }
 
 #routes for private subnets to NGW's
@@ -141,11 +142,13 @@ resource "aws_route" "samrdaymond_wa_private_a_dr" {
   destination_cidr_block = "0.0.0.0/0"
   gateway_id = "aws_nat_gateway.samrdaymond_ngw_a"
 }
+
 resource "aws_route" "samrdaymond_wa_private_b_dr" {
   route_table_id = "aws_route_table.samrdaymond_wa_public_rt_b"
   destination_cidr_block = "0.0.0.0/0"
   gateway_id = "aws_nat_gateway.samrdaymond_ngw_b"
 }
+
 resource "aws_route" "samrdaymond_wa_private_c_dr" {
   route_table_id = "aws_route_table.samrdaymond_wa_public_rt_c"
   destination_cidr_block = "0.0.0.0/0"

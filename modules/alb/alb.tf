@@ -23,14 +23,16 @@ resource "aws_lb" "samrdaymond_wa_alb" {
   enable_deletion_protection = false
 }
  
+#creation of alb target group
 resource "aws_alb_target_group" "samrdaymond_alb_tg" {
   name        = "samrdaymond-weather-app-tg"
   port        = 3000
   protocol    = "HTTP"
   vpc_id      = aws_vpc.samrdaymond_wa_vpc.id
   target_type = "ip"
+}
 
-
+#creation fo listerner for alb
 resource "aws_alb_listener" "http" {
   load_balancer_arn = aws_lb.samrdaymond_wa_alb.arn
   port              = 80
