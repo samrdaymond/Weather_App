@@ -67,6 +67,7 @@ resource "aws_ecs_task_definition" "samrdaymond_wa_ecs_td" {
   execution_role_arn = aws_iam_role.samrdaymondEcsExecutionRole.arn
   task_role_arn = aws_iam_role.samrdaymondEcsExecutionRole.arn
   container_definitions = jsonencode([
+    {
             "name": "weather-app",
             "image": "{ECR-repo-uri}",
             "portMappings": [
@@ -76,6 +77,7 @@ resource "aws_ecs_task_definition" "samrdaymond_wa_ecs_td" {
                     "hostPort": 3000
                 }
             ]
+    }
   ])
   tags = {
     Name        = "${var.name}-task-${var.environment}"

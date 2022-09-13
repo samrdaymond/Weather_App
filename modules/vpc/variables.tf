@@ -12,7 +12,7 @@ variable "vpc_cidr" {
 #variable for each availability zone
 
 variable "availability_zone" {
-  type = "map" 
+  type = map 
     default = {
       "aza" = "ap-southeast-2a"
       "azb" = "ap-southeast-2b"
