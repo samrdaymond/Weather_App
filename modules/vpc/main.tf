@@ -15,7 +15,7 @@ resource "aws_subnet" "samrdaymond_wa_private_sub_a" {
   }
 }
 resource "aws_subnet" "samrdaymond_wa_private_sub_b" {
-  vpc_id = aws_vpc.var.vpc_name.id
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
   cidr_block = var.private_subnet_cidr.sub_b
   availability_zone = var.availability_zone.azb
   tags = {
@@ -24,29 +24,12 @@ resource "aws_subnet" "samrdaymond_wa_private_sub_b" {
   }
 }
 resource "aws_subnet" "samrdaymond_wa_private_sub_c" {
-  vpc_id = aws_vpc.var.vpc_name.id
-  cidr_block = vvar.private_subnet_cidr.sub_c
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
+  cidr_block = var.private_subnet_cidr.sub_c
   availability_zone = var.availability_zone.aza
   tags = {
     "name" = "private_sub_c"
     "zone" = "private"
-  }
-}
-#security group creation for private subnets
-resource "aws_security_group" "samrdaymond_wa_private_sg" {
-  vpc_id = aws_vpc.var.vpc_name.id
-  name = "samrdaymond_wa_private_sg"
-  description = "security group for private subnets"
-  ingress = {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    security_groups = [ "${aws_security_group.samrdaymond_wa_public_sg}" ]
-  }
-  egress = {
-    from_port = "0"
-    to_port = "0"
-    protocol = "-1"
   }
 }
 ### EIP's for NAT gateways
@@ -73,7 +56,7 @@ resource "aws_nat_gateway" "samrdaymond_wa_ngw_a" {
       "key" = "value"
       }
   depends_on = [
-    aws_internet_gateway.var.samrdaymond_wa_igw
+    aws_internet_gateway.samrdaymond_wa_igw
   ]
 }
 resource "aws_nat_gateway" "samrdaymond_wa_ngw_b" {
@@ -83,7 +66,7 @@ resource "aws_nat_gateway" "samrdaymond_wa_ngw_b" {
       "key" = "value"
     }
   depends_on = [
-    aws_internet_gateway.var.samrdaymond_wa_igw
+    aws_internet_gateway.samrdaymond_wa_igw
   ]
 }
 resource "aws_nat_gateway" "samrdaymond_wa_ngw_c" {
@@ -93,21 +76,27 @@ resource "aws_nat_gateway" "samrdaymond_wa_ngw_c" {
       "key" = "value"
     }
   depends_on = [
-    aws_internet_gateway.var.samrdaymond_wa_igw
+    aws_internet_gateway.samrdaymond_wa_igw
   ]
 }
 #creation of route tables for private subnets
-resource "aws_route" "samrdaymond_wa_private_rt_a" {
-  vpc_id = aws_vpc.var.vpc_name.id
-  name = "samrdaymond_wa_private_rt_a"
+resource "aws_route_table" "samrdaymond_wa_private_rt_a" {
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
+  tags = {
+    "Name" = "samrdaymond_wa_private_rt_a"
+  }
 }
-resource "aws_route" "samrdaymond_wa_private_rt_b" {
-  vpc_id = aws_vpc.var.vpc_name.id
-  name = "samrdaymond_wa_private_rt_b"
+resource "aws_route_table" "samrdaymond_wa_private_rt_b" {
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
+  tags = {
+    "Name" = "samrdaymond_wa_private_rt_b"
+  }
 }
-resource "aws_route" "samrdaymond_wa_private_rt_c" {
-  vpc_id = aws_vpc.var.vpc_name.id
-  name = "samrdaymond_wa_private_rt_c"
+resource "aws_route_table" "samrdaymond_wa_private_rt_c" {
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
+  tags = {
+    "Name" = "samrdaymond_wa_private_rt_c"
+  }
 }
 #routes for private subnets to NGW's
 resource "aws_route" "samrdaymond_wa_private_a_dr" {
@@ -140,76 +129,58 @@ resource "aws_route_table_association" "private_c" {
 }
 #3 public subnet creation
 resource "aws_subnet" "samrdaymond_wa_public_sub_a" {
-  vpc_id = aws_vpc.var.vpc_name.id
-  cidr_block = var.public_sub_a_cid
-  availability_zone = ap-southeast-2a
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
+  cidr_block = var.public_subnet_cidr.sub_a
+  availability_zone = "ap-southeast-2a"
   tags = {
     "name" = "public_sub_a"
     "zone" = "public"
   }
 }
 resource "aws_subnet" "samrdaymond_wa_public_sub_b" {
-  vpc_id = aws_vpc.var.vpc_name.id
-  cidr_block = var.public_sub_b_cid
-  availability_zone = ap-southeast-2b
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
+  cidr_block = var.public_subnet_cidr.sub_b
+  availability_zone = "ap-southeast-2b"
   tags = {
     "name" = "public_sub_b"
     "zone" = "public"
   }
 }
 resource "aws_subnet" "samrdaymond_wa_public_sub_c" {
-  vpc_id = aws_vpc.var.vpc_name.id
-  cidr_block = var.public_sub_c_cid
-  availability_zone = ap-southeast-2c
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
+  cidr_block = var.public_subnet_cidr.sub_c
+  availability_zone = "ap-southeast-2c"
   tags = {
     "name" = "public_sub_c"
     "zone" = "public"
   }
 }
 #end resource
-#creation of security group for public subnets"
-resource "aws_security_group" "samrdaymond_wa_public_sg" {
-  vpc_id = aws_vpc.var.vpc_name.id
-  name = "samrdaymond_wa_public_sg"
-  description = "security group for public subnets"
-  ingress = [ {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    security_groups = [ "${aws_security_group.samrdaymond_wa_private_sg}" ]
-  },
-  {
-    cidr_block = ["var.ingress_CIDR_block_pub"]
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-  } 
-  ]
-  egress = {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    }
-}
 #create IGW for public subnets
 resource "aws_internet_gateway" "samrdaymond_wa_igw" {
-  vpc_id = aws_vpc.var.vpc_name.id
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
   tags = {
     Name = "var.igw_name"
   }
 }
 #creation of Route Tables for the public subnets
-resource "aws_route" "samrdaymond_wa_public_rt_a" {
-  vpc_id = aws_vpc.var.vpc_name.id
-  name = "samrdaymond_wa_public_rt_a"
+resource "aws_route_table" "samrdaymond_wa_public_rt_a" {
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
+  tags = {
+    "Name" = "samrdaymond_wa_public_rt_a"
+  }
 }
-resource "aws_route" "samrdaymond_wa_public_rt_b" {
-  vpc_id = aws_vpc.var.vpc_name.id
-  name = "samrdaymond_wa_public_rt_a"
+resource "aws_route_table" "samrdaymond_wa_public_rt_b" {
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
+  tags = {
+    "Name" = "samrdaymond_wa_public_rt_b"
+  }
 }
-resource "aws_route" "samrdaymond_wa_public_rt_c" {
-  vpc_id = aws_vpc.var.vpc_name.id
-  name = "samrdaymond_wa_public_rt_a"
+resource "aws_route_table" "samrdaymond_wa_public_rt_c" {
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
+  tags = {
+    "Name" = "samrdaymond_wa_public_rt_c"
+  }
 }
 #routes for public subnets to IGW
 resource "aws_route" "samrdaymond_wa_public_a_dr" {
@@ -242,7 +213,7 @@ resource "aws_route_table_association" "public_c" {
 }
 #creation of VPC endpoint for S3 bucket
 resource "aws_vpc_endpoint" "samrdaymond_wa_s3_endpoint" {
-  vpc_id = aws_vpc.var.vpc_name.id
+  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
   service_name = "com.amazonaws.ap-southeast-2.s3"
 }
 #associate s3 endpoint with route tables

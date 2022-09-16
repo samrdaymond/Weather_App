@@ -1,23 +1,21 @@
 module "s3_bucket" {
   source = "./modules/s3"
   bucket = var.bucket
-
-  tags = var.tags
 }
 
 module "vpc" {
   source = "./modules/vpc"
-  #pass variables here (I have set defaults for demonstration purposes)
+  
 }
 
 module "ecs" {
   source = "./modules/ecs"
-  #pass variables here (I have set defaults for demonstration purposes)
+  samrdaymond_wa_vpcid = module.vpc.samrdaymond_wa_vpcid
 }
 
 module "alb" {
   source = "./modules/alb"
-  #pass variables here (I have set defaults for demonstration purposes)
+  samrdaymond_wa_vpcid = module.vpc.samrdaymond_wa_vpcid
 }
 
 output "bucket_name" {

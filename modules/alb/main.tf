@@ -2,7 +2,7 @@
 
 resource "aws_security_group" "samrdaymond_wa_alb_sg" {
   description = "weather app alb security group"
-  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
+  vpc_id = var.samrdaymond_wa_vpcid
   ingress = [ {
     cidr_blocks = ["0.0.0.0/0"]
     description = "Internet Web Traffic"
@@ -28,7 +28,7 @@ resource "aws_alb_target_group" "samrdaymond_alb_tg" {
   name        = "samrdaymond-weather-app-tg"
   port        = 3000
   protocol    = "HTTP"
-  vpc_id      = aws_vpc.samrdaymond_wa_vpc.id
+  vpc_id      = var.samrdaymond_wa_vpcid
   target_type = "ip"
 }
 

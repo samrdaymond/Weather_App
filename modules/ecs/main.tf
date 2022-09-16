@@ -2,10 +2,10 @@
 
 resource "aws_security_group" "weather-app-ecs-sg" {
   description = "weather-app-ecs-sg"
-  vpc_id = aws_vpc.samrdaymond_wa_vpc.id
+  vpc_id = var.samrdaymond_wa_vpcid
   ingress = [ {
     description = "ALB to ECS traffic"
-    security_groups = aws_security_groups.weather-app-alb-sg.id
+    security_groups = var.samrdaymond_wa_alb_sgid
     from_port = 80
     to_port = 80
     protocol = "HTTP"    
@@ -80,8 +80,7 @@ resource "aws_ecs_task_definition" "samrdaymond_wa_ecs_td" {
     }
   ])
   tags = {
-    Name        = "${var.name}-task-${var.environment}"
-    Environment = var.environment
+    Name        = "samrdaymond_wa_ecs_td"
   }
 }
 

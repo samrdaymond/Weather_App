@@ -39,7 +39,17 @@ jobs:
       run: make run_apply 
 
     docker_build:
-     docker tag {image-name}:1 {account-id}.dkr.ecr.{aws-region}.amazonaws.com/{repo-name}:1
+    docker build -t samrdaymondweatherapp -f ./weather-app.dockerfile
+
+    docker_tag:
+    docker tag samrdaymondweatherapp:1 {account-id}.dkr.ecr.{aws-region}.amazonaws.com/{repo-name}:1
+
+    ecr_login:
+    aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin {account-id}.dkr.ecr.{aws-region}.amazonaws.com
+
+    docker_push:
+    docker push {account-id}.dkr.ecr.{aws-region}.amazonaws.com/{repo-name}:1
+
 
 
 
