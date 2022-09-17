@@ -1,6 +1,8 @@
+#specify the image to start with
 FROM hashicorp/terraform:1.0.1 as tf
 MAINTAINER "Contino APAC <delivery.au@contino.io>"
 
+#install various components
 RUN apk add --update --no-cache \
         make \
         bash \

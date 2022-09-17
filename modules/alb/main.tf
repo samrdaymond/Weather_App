@@ -8,7 +8,11 @@ resource "aws_security_group" "samrdaymond_wa_alb_sg" {
     description = "Internet Web Traffic"
     from_port = 80
     to_port = 80
-    protocol = "HTTP"    
+    protocol = "HTTP"
+    ipv6_cidr_blocks = []
+    prefix_list_ids = []
+    security_groups = []
+    self = false
   } ]
 }
 #creation of alb
@@ -18,7 +22,7 @@ resource "aws_lb" "samrdaymond_wa_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = aws_security_group.samrdaymond_wa_alb_sg.id
-  subnets            = [aws_subnet.samrdaymond_wa_public_sub_a.id, aws_subnet.samrdaymond_wa_public_sub_b.id]
+  subnets            = [var.samrdaymond_wa_public_sub_aid, var.samrdaymond_wa_public_sub_bid]
   
   enable_deletion_protection = false
 }

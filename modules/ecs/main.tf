@@ -1,6 +1,6 @@
 # create security group for ecs
 
-resource "aws_security_group" "weather-app-ecs-sg" {
+resource "aws_security_group" "samrdaymond_wa_ecs_sg" {
   description = "weather-app-ecs-sg"
   vpc_id = var.samrdaymond_wa_vpcid
   ingress = [ {
@@ -8,7 +8,12 @@ resource "aws_security_group" "weather-app-ecs-sg" {
     security_groups = var.samrdaymond_wa_alb_sgid
     from_port = 80
     to_port = 80
-    protocol = "HTTP"    
+    protocol = "HTTP"
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = []
+    prefix_list_ids = []
+    security_groups = []
+    self = false    
   } ]
 }
 
@@ -58,9 +63,8 @@ resource "aws_ecs_cluster" "samrdaymond_wa_ecs_cluster" {
 #creation of ecs task definition
 
 resource "aws_ecs_task_definition" "samrdaymond_wa_ecs_td" {
-  name = "weather-app"
   network_mode = "awsvpc"
-  requires_compatibilities = ["Fargate"]
+  requires_compatibilities = ["FARGATE"]
   family = "weather-app-fam"
   cpu = 256
   memory = 512
@@ -93,20 +97,17 @@ resource "aws_ecs_service" "samrdaymond_wa_ecsservice" {
   desired_count                      = 1
   launch_type                        = "FARGATE"
   iam_role                           = aws_iam_role.samrdaymondEcsExecutionRole.arn
-  service_name                        = "weather-app-service"
-  
-
 
   network_configuration {
-    security_groups  = var.ecs_service_security_groups
-    subnets          = "[aws_subnet.samrdaymond_wa_public_sub_a.id, aws_subnet.samrdaymond_wa_public_sub_b.id]"
+    security_groups  = [var.samrdaymond_wa_alb_sgid, aws_security_group.samrdaymond_wa_ecs_sg.id]
+    subnets          = [var.samrdaymond_wa_public_sub_aid, var.samrdaymond_wa_public_sub_bid]
     assign_public_ip = false
   }
 
   load_balancer {
-    target_group_arn = var.aws_alb_target_group_arn
-    container_name   = "${var.name}-container-${var.environment}"
-    container_port   = var.container_port
+    target_group_arn = var.samrdaymond_wa_aws_alb_tg_arn
+    container_name   = "weather-app"
+    container_port   = 3000
   }
 
 }
