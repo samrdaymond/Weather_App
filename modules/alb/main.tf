@@ -21,9 +21,8 @@ resource "aws_lb" "samrdaymond_wa_alb" {
   name               = "weather-app-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = aws_security_group.samrdaymond_wa_alb_sg.id
+  security_groups    = [aws_security_group.samrdaymond_wa_alb_sg.id]
   subnets            = [var.samrdaymond_wa_public_sub_aid, var.samrdaymond_wa_public_sub_bid]
-  
   enable_deletion_protection = false
 }
  

@@ -42,5 +42,5 @@ destroy_apply:
 
 .PHONY: list_bucket
 list_bucket: 
-	$(COMPOSE_RUN_AWS) s3 ls
+	$(COMPOSE_RUN_AWS) s3 ls	
 

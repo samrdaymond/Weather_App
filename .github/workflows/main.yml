@@ -31,6 +31,9 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_SESSION_TOKEN:  ${{ secrets.AWS_SESSION_TOKEN }} 
+      ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      REPO_NAME: ${{ secrets.ECRREPO_NAME }}
     steps:
     - uses: actions/checkout@v2
     - name: Terraform_Plan
